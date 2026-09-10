@@ -1,0 +1,256 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>His Image Performing Arts — Merch Checkout</title>
+  <script src="https://js.stripe.com/v3/"></script>
+  <style>
+    :root {
+      --rose: #6e3436;
+      --blush: #f7dbd9;
+      --blush-light: #fdf2f1;
+      --text: #3a2b2b;
+    }
+    * { box-sizing: border-box; }
+    body {
+      margin: 0;
+      font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Helvetica, Arial, sans-serif;
+      background: var(--blush-light);
+      color: var(--text);
+      min-height: 100vh;
+      display: flex;
+      justify-content: center;
+      padding: 24px 16px;
+    }
+    .card {
+      background: #fff;
+      border-radius: 16px;
+      box-shadow: 0 4px 24px rgba(110, 52, 54, 0.12);
+      width: 100%;
+      max-width: 480px;
+      padding: 28px 24px;
+    }
+    h1 {
+      font-size: 20px;
+      color: var(--rose);
+      margin: 0 0 4px;
+      text-align: center;
+    }
+    .subtitle {
+      text-align: center;
+      font-size: 14px;
+      color: #8a7373;
+      margin: 0 0 24px;
+    }
+    .product {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      border: 1px solid var(--blush);
+      border-radius: 10px;
+      padding: 14px 16px;
+      margin-bottom: 12px;
+      cursor: pointer;
+      transition: border-color 0.15s;
+    }
+    .product.selected {
+      border-color: var(--rose);
+      background: var(--blush-light);
+    }
+    .product-info { display: flex; align-items: center; gap: 12px; }
+    .product-name { font-weight: 600; }
+    .product-price { color: #8a7373; font-size: 14px; }
+    .qty {
+      display: flex;
+      align-items: center;
+      gap: 10px;
+    }
+    .qty button {
+      width: 28px;
+      height: 28px;
+      border-radius: 50%;
+      border: 1px solid var(--blush);
+      background: #fff;
+      color: var(--rose);
+      font-size: 16px;
+      cursor: pointer;
+      line-height: 1;
+    }
+    .qty span { min-width: 16px; text-align: center; }
+    .total-row {
+      display: flex;
+      justify-content: space-between;
+      font-weight: 600;
+      margin: 20px 0;
+      font-size: 16px;
+    }
+    #pay-button {
+      width: 100%;
+      background: var(--rose);
+      color: #fff;
+      border: none;
+      border-radius: 10px;
+      padding: 14px;
+      font-size: 16px;
+      font-weight: 600;
+      cursor: pointer;
+    }
+    #pay-button:disabled {
+      opacity: 0.5;
+      cursor: not-allowed;
+    }
+    #checkout-form { margin-top: 20px; }
+    #confirmation, #error-message {
+      display: none;
+      text-align: center;
+      padding: 20px 0;
+    }
+    #confirmation .check {
+      font-size: 48px;
+      color: var(--rose);
+      margin-bottom: 12px;
+    }
+    #confirmation h2 { color: var(--rose); margin: 0 0 8px; }
+    #loading { text-align: center; padding: 40px 0; color: #8a7373; }
+    #error-message { color: #b00020; }
+  </style>
+</head>
+<body>
+  <div class="card">
+    <h1>His Image Performing Arts</h1>
+    <p class="subtitle">Merch Checkout</p>
+
+    <div id="loading">Loading…</div>
+
+    <div id="picker" style="display:none;">
+      <div class="product" id="product-tshirt" data-price-id="price_1UD3ufEEsuxo66cWxO1J4ewS" data-name="T-Shirt" data-amount="22">
+        <div class="product-info">
+          <div>
+            <div class="product-name">T-Shirt</div>
+            <div class="product-price">$22.00</div>
+          </div>
+        </div>
+        <div class="qty">
+          <button type="button" onclick="changeQty('tshirt', -1)">−</button>
+          <span id="qty-tshirt">0</span>
+          <button type="button" onclick="changeQty('tshirt', 1)">+</button>
+        </div>
+      </div>
+
+      <div class="product" id="product-sweatshirt" data-price-id="price_1UD3uzEEsuxo66cWzFSeJo8w" data-name="Sweatshirt" data-amount="40">
+        <div class="product-info">
+          <div>
+            <div class="product-name">Sweatshirt</div>
+            <div class="product-price">$40.00</div>
+          </div>
+        </div>
+        <div class="qty">
+          <button type="button" onclick="changeQty('sweatshirt', -1)">−</button>
+          <span id="qty-sweatshirt">0</span>
+          <button type="button" onclick="changeQty('sweatshirt', 1)">+</button>
+        </div>
+      </div>
+
+      <div class="total-row">
+        <span>Total</span>
+        <span id="total-amount">$0.00</span>
+      </div>
+
+      <button id="pay-button" onclick="startCheckout()" disabled>Continue to Payment</button>
+
+      <div id="checkout-form"></div>
+    </div>
+
+    <div id="confirmation">
+      <div class="check">✓</div>
+      <h2>Payment has been received.</h2>
+      <p>Thank you for purchasing!</p>
+    </div>
+
+    <div id="error-message">
+      <p>We couldn't confirm this payment. If you were charged, please see a studio staff member.</p>
+    </div>
+  </div>
+
+  <script>
+    // ---- SETUP: paste your Stripe PUBLISHABLE key here ----
+    const stripe = Stripe('pk_live_51TLoebEEsuxo66cWPHxgJHfryk7eOEh5Ioq0uUGISQ5cfmdQG3FazN69mj1qo03D0QLDbr8Co9DFrQQuujw96pp200H0d50Rbw');
+
+    const quantities = { tshirt: 0, sweatshirt: 0 };
+    const prices = {
+      tshirt: { id: 'price_1UD3ufEEsuxo66cWxO1J4ewS', amount: 22 },
+      sweatshirt: { id: 'price_1UD3uzEEsuxo66cWzFSeJo8w', amount: 40 },
+    };
+
+    function changeQty(item, delta) {
+      const next = quantities[item] + delta;
+      if (next < 0) return;
+      quantities[item] = next;
+      document.getElementById('qty-' + item).textContent = next;
+      document.getElementById('product-' + item).classList.toggle('selected', next > 0);
+      updateTotal();
+    }
+
+    function updateTotal() {
+      const total = quantities.tshirt * prices.tshirt.amount + quantities.sweatshirt * prices.sweatshirt.amount;
+      document.getElementById('total-amount').textContent = '$' + total.toFixed(2);
+      document.getElementById('pay-button').disabled = total === 0;
+    }
+
+    async function startCheckout() {
+      const lineItems = [];
+      if (quantities.tshirt > 0) lineItems.push({ priceId: prices.tshirt.id, quantity: quantities.tshirt });
+      if (quantities.sweatshirt > 0) lineItems.push({ priceId: prices.sweatshirt.id, quantity: quantities.sweatshirt });
+
+      document.getElementById('pay-button').disabled = true;
+      document.getElementById('pay-button').textContent = 'Loading…';
+
+      const response = await fetch('/.netlify/functions/create-checkout-session', {
+        method: 'POST',
+        body: JSON.stringify({ items: lineItems }),
+      });
+      const data = await response.json();
+
+      if (!data.clientSecret) {
+        alert('Something went wrong starting checkout. Please try again.');
+        document.getElementById('pay-button').disabled = false;
+        document.getElementById('pay-button').textContent = 'Continue to Payment';
+        return;
+      }
+
+      document.querySelectorAll('.product, .total-row, #pay-button').forEach(el => el.style.display = 'none');
+
+      const checkout = await stripe.initEmbeddedCheckout({
+        clientSecret: data.clientSecret,
+      });
+      checkout.mount('#checkout-form');
+    }
+
+    async function checkForReturn() {
+      const params = new URLSearchParams(window.location.search);
+      const sessionId = params.get('session_id');
+
+      if (!sessionId) {
+        document.getElementById('loading').style.display = 'none';
+        document.getElementById('picker').style.display = 'block';
+        updateTotal();
+        return;
+      }
+
+      const response = await fetch('/.netlify/functions/check-session?session_id=' + encodeURIComponent(sessionId));
+      const data = await response.json();
+
+      document.getElementById('loading').style.display = 'none';
+
+      if (data.status === 'paid') {
+        document.getElementById('confirmation').style.display = 'block';
+      } else {
+        document.getElementById('error-message').style.display = 'block';
+      }
+    }
+
+    checkForReturn();
+  </script>
+</body>
+</html>
