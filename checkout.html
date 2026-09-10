@@ -5,156 +5,248 @@
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
   <title>His Image Performing Arts — Merch Checkout</title>
   <script src="https://js.stripe.com/v3/"></script>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,500;0,600;1,500&family=Parisienne&family=Poppins:wght@400;500;600&display=swap" rel="stylesheet">
   <style>
     :root {
-      --rose: #6e3436;
-      --blush: #f7dbd9;
-      --blush-light: #fdf2f1;
-      --text: #3a2b2b;
+      --cream: #f9f5ef;
+      --cream-deep: #f2ebe1;
+      --ink: #3a2b2b;
+      --rose-deep: #6e3436;
+      --rose: #b4696b;
+      --blush: #f3d9d6;
+      --blush-line: #e6bdb9;
+      --white: #ffffff;
     }
     * { box-sizing: border-box; }
     body {
       margin: 0;
-      font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Helvetica, Arial, sans-serif;
-      background: var(--blush-light);
-      color: var(--text);
+      font-family: 'Poppins', sans-serif;
+      background: var(--cream);
+      background-image: radial-gradient(circle at 50% 0%, var(--cream-deep), var(--cream) 55%);
+      color: var(--ink);
       min-height: 100vh;
       display: flex;
       justify-content: center;
-      padding: 24px 16px;
+      padding: 40px 16px 56px;
     }
     .card {
-      background: #fff;
-      border-radius: 16px;
-      box-shadow: 0 4px 24px rgba(110, 52, 54, 0.12);
       width: 100%;
-      max-width: 480px;
-      padding: 28px 24px;
+      max-width: 420px;
+    }
+
+    /* ---- Header ---- */
+    .dancer {
+      display: block;
+      margin: 0 auto 10px;
+      width: 64px;
+      height: 64px;
+      color: var(--blush-line);
     }
     h1 {
-      font-size: 20px;
-      color: var(--rose);
-      margin: 0 0 4px;
+      font-family: 'Cormorant Garamond', serif;
+      font-weight: 600;
+      font-size: 30px;
+      color: var(--rose-deep);
+      margin: 0;
       text-align: center;
+      letter-spacing: 0.3px;
+    }
+    .rule {
+      width: 56px;
+      height: 1px;
+      background: var(--blush-line);
+      margin: 14px auto;
     }
     .subtitle {
+      font-family: 'Parisienne', cursive;
+      font-size: 24px;
+      color: var(--rose);
       text-align: center;
-      font-size: 14px;
-      color: #8a7373;
-      margin: 0 0 24px;
+      margin: 0 0 28px;
+      line-height: 1;
     }
+
+    /* ---- Products ---- */
     .product {
       display: flex;
       align-items: center;
       justify-content: space-between;
+      background: var(--white);
       border: 1px solid var(--blush);
-      border-radius: 10px;
-      padding: 14px 16px;
+      border-radius: 4px;
+      padding: 16px 18px;
       margin-bottom: 12px;
-      cursor: pointer;
-      transition: border-color 0.15s;
+      transition: border-color 0.15s, background 0.15s;
     }
     .product.selected {
       border-color: var(--rose);
-      background: var(--blush-light);
+      background: var(--blush);
     }
-    .product-info { display: flex; align-items: center; gap: 12px; }
-    .product-name { font-weight: 600; }
-    .product-price { color: #8a7373; font-size: 14px; }
+    .product-name {
+      font-family: 'Cormorant Garamond', serif;
+      font-weight: 600;
+      font-size: 19px;
+      color: var(--ink);
+    }
+    .product-price {
+      font-size: 13px;
+      color: var(--rose);
+      margin-top: 2px;
+      letter-spacing: 0.2px;
+    }
     .qty {
       display: flex;
       align-items: center;
-      gap: 10px;
+      gap: 12px;
     }
     .qty button {
       width: 28px;
       height: 28px;
       border-radius: 50%;
-      border: 1px solid var(--blush);
-      background: #fff;
-      color: var(--rose);
-      font-size: 16px;
+      border: 1px solid var(--rose);
+      background: var(--white);
+      color: var(--rose-deep);
+      font-size: 15px;
       cursor: pointer;
       line-height: 1;
+      display: flex;
+      align-items: center;
+      justify-content: center;
     }
-    .qty span { min-width: 16px; text-align: center; }
+    .qty button:active { background: var(--blush); }
+    .qty span {
+      min-width: 14px;
+      text-align: center;
+      font-weight: 500;
+      color: var(--ink);
+    }
+
+    /* ---- Total & pay ---- */
     .total-row {
       display: flex;
       justify-content: space-between;
+      align-items: baseline;
+      margin: 22px 0 18px;
+      padding-top: 16px;
+      border-top: 1px solid var(--blush-line);
+    }
+    .total-row .label {
+      font-family: 'Cormorant Garamond', serif;
+      font-size: 17px;
+      color: var(--rose-deep);
+    }
+    .total-row .amount {
+      font-size: 19px;
       font-weight: 600;
-      margin: 20px 0;
-      font-size: 16px;
+      color: var(--ink);
     }
     #pay-button {
       width: 100%;
-      background: var(--rose);
-      color: #fff;
+      background: var(--rose-deep);
+      color: var(--cream);
       border: none;
-      border-radius: 10px;
-      padding: 14px;
-      font-size: 16px;
-      font-weight: 600;
+      border-radius: 4px;
+      padding: 15px;
+      font-family: 'Poppins', sans-serif;
+      font-size: 15px;
+      font-weight: 500;
+      letter-spacing: 0.3px;
       cursor: pointer;
+      transition: background 0.15s;
     }
+    #pay-button:hover:not(:disabled) { background: #5a2a2c; }
     #pay-button:disabled {
-      opacity: 0.5;
+      opacity: 0.45;
       cursor: not-allowed;
     }
-    #checkout-form { margin-top: 20px; }
+    #checkout-form { margin-top: 22px; }
+
+    /* ---- States ---- */
     #confirmation, #error-message {
       display: none;
       text-align: center;
-      padding: 20px 0;
+      padding: 32px 12px 8px;
     }
-    #confirmation .check {
-      font-size: 48px;
+    #confirmation .mark {
+      width: 46px;
+      height: 46px;
+      margin: 0 auto 18px;
+      color: var(--rose-deep);
+    }
+    #confirmation h2 {
+      font-family: 'Cormorant Garamond', serif;
+      font-weight: 600;
+      color: var(--rose-deep);
+      font-size: 24px;
+      margin: 0 0 8px;
+    }
+    #confirmation p {
+      font-family: 'Parisienne', cursive;
+      font-size: 20px;
       color: var(--rose);
-      margin-bottom: 12px;
+      margin: 0;
     }
-    #confirmation h2 { color: var(--rose); margin: 0 0 8px; }
-    #loading { text-align: center; padding: 40px 0; color: #8a7373; }
-    #error-message { color: #b00020; }
+    #loading {
+      text-align: center;
+      padding: 60px 0;
+      color: var(--rose);
+      font-size: 14px;
+      letter-spacing: 0.2px;
+    }
+    #error-message p {
+      color: #9c3b3b;
+      font-size: 14px;
+      line-height: 1.6;
+    }
   </style>
 </head>
 <body>
   <div class="card">
-    <h1>His Image Performing Arts</h1>
-    <p class="subtitle">Merch Checkout</p>
 
     <div id="loading">Loading…</div>
 
     <div id="picker" style="display:none;">
+      <svg class="dancer" viewBox="0 0 100 100" fill="currentColor" xmlns="http://www.w3.org/2000/svg">
+        <circle cx="61" cy="16" r="7.5"/>
+        <path d="M58 23c-2 6-1 12 3 16 3.5 3.5 4 8 1.5 13-1.5 3-1 5 1.5 6.5 4 2.5 5 7 2.5 12.5-2 4.5-1.5 9 2 12.5l3 3-4 3.5c-4-3.5-5.5-9-3.5-14.5 1.7-4.7.7-8-2.3-10-3.8-2.5-4.7-6.3-2.3-11 2.3-4.6 1.6-8.4-2-12-4-4-5.3-10.4-3.4-16.5 1-3.4 3-5.4 5.6-3z"/>
+        <path d="M56 30c-6 1.5-11.5 5.5-15 11.5-1.5 2.6-4.7 3.4-7 1.6-2-1.6-2.3-4.4-.7-6.4 4.3-5.4 10.3-9.7 17-11.9 2.6-.9 5.2.6 5.7 3.2z"/>
+        <path d="M69 27c5.5 2.7 9.8 7.5 11.8 13.5.9 2.7-.4 5.6-3 6.4-2.5.8-5.2-.6-6-3.1-1.4-4.2-4.2-7.7-7.9-9.9-2.4-1.4-3-4.6-1.3-6.8 1.4-1.8 4.1-2.2 6.4-.1z"/>
+        <path d="M63 62c1 6.5-.5 12.7-4.5 17.8-2 2.6-1.6 6 .8 8 2.3 1.9 5.6 1.6 7.6-.7 5.5-6.4 7.7-14.5 6.3-23-.5-3-3.3-5-6.3-4.4-2.7.5-4.4 3.1-3.9 5.9-.1-1.2 0-2.4 0-3.6z"/>
+        <path d="M55 63c-2 8-7 14.7-14 19-2.7 1.7-6.1.8-7.7-2-1.5-2.6-.6-6 2-7.7 5.2-3.2 8.9-8 10.5-14 .8-3 3.9-4.7 6.8-3.9 2.7.8 4.3 3.5 3.6 6.2-.3 1.1-.8 1.7-1.2 2.4z"/>
+      </svg>
+      <h1>His Image Performing Arts</h1>
+      <div class="rule"></div>
+      <p class="subtitle">Merch Checkout</p>
+
       <div class="product" id="product-tshirt" data-price-id="price_1UD3ufEEsuxo66cWxO1J4ewS" data-name="T-Shirt" data-amount="22">
-        <div class="product-info">
-          <div>
-            <div class="product-name">T-Shirt</div>
-            <div class="product-price">$22.00</div>
-          </div>
+        <div>
+          <div class="product-name">T-Shirt</div>
+          <div class="product-price">$22.00</div>
         </div>
         <div class="qty">
-          <button type="button" onclick="changeQty('tshirt', -1)">−</button>
+          <button type="button" onclick="changeQty('tshirt', -1)" aria-label="Decrease T-Shirt quantity">−</button>
           <span id="qty-tshirt">0</span>
-          <button type="button" onclick="changeQty('tshirt', 1)">+</button>
+          <button type="button" onclick="changeQty('tshirt', 1)" aria-label="Increase T-Shirt quantity">+</button>
         </div>
       </div>
 
       <div class="product" id="product-sweatshirt" data-price-id="price_1UD3uzEEsuxo66cWzFSeJo8w" data-name="Sweatshirt" data-amount="40">
-        <div class="product-info">
-          <div>
-            <div class="product-name">Sweatshirt</div>
-            <div class="product-price">$40.00</div>
-          </div>
+        <div>
+          <div class="product-name">Sweatshirt</div>
+          <div class="product-price">$40.00</div>
         </div>
         <div class="qty">
-          <button type="button" onclick="changeQty('sweatshirt', -1)">−</button>
+          <button type="button" onclick="changeQty('sweatshirt', -1)" aria-label="Decrease Sweatshirt quantity">−</button>
           <span id="qty-sweatshirt">0</span>
-          <button type="button" onclick="changeQty('sweatshirt', 1)">+</button>
+          <button type="button" onclick="changeQty('sweatshirt', 1)" aria-label="Increase Sweatshirt quantity">+</button>
         </div>
       </div>
 
       <div class="total-row">
-        <span>Total</span>
-        <span id="total-amount">$0.00</span>
+        <span class="label">Total</span>
+        <span class="amount" id="total-amount">$0.00</span>
       </div>
 
       <button id="pay-button" onclick="startCheckout()" disabled>Continue to Payment</button>
@@ -163,18 +255,20 @@
     </div>
 
     <div id="confirmation">
-      <div class="check">✓</div>
-      <h2>Payment has been received.</h2>
+      <svg class="mark" viewBox="0 0 48 48" fill="none" xmlns="http://www.w3.org/2000/svg">
+        <circle cx="24" cy="24" r="22" stroke="currentColor" stroke-width="1.5"/>
+        <path d="M14 24.5l6.5 6.5L34 17" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
+      </svg>
+      <h2>Payment received</h2>
       <p>Thank you for purchasing!</p>
     </div>
 
     <div id="error-message">
-      <p>We couldn't confirm this payment. If you were charged, please see a studio staff member.</p>
+      <p>We couldn't confirm this payment.<br>If you were charged, please see a studio staff member.</p>
     </div>
   </div>
 
   <script>
-    // ---- SETUP: paste your Stripe PUBLISHABLE key here ----
     const stripe = Stripe('pk_live_51TLoebEEsuxo66cWPHxgJHfryk7eOEh5Ioq0uUGISQ5cfmdQG3FazN69mj1qo03D0QLDbr8Co9DFrQQuujw96pp200H0d50Rbw');
 
     const quantities = { tshirt: 0, sweatshirt: 0 };
