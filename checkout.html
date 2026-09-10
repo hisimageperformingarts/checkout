@@ -7,16 +7,14 @@
   <script src="https://js.stripe.com/v3/"></script>
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-  <link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,500;0,600;1,500&family=Parisienne&family=Poppins:wght@400;500;600&display=swap" rel="stylesheet">
+  <link href="https://fonts.googleapis.com/css2?family=Alex+Brush&family=Playfair+Display:wght@700;800&family=Poppins:wght@400;500;600;700&display=swap" rel="stylesheet">
   <style>
     :root {
-      --cream: #f9f5ef;
-      --cream-deep: #f2ebe1;
-      --ink: #3a2b2b;
-      --rose-deep: #6e3436;
-      --rose: #b4696b;
-      --blush: #f3d9d6;
-      --blush-line: #e6bdb9;
+      --cream: #f7f5f0;
+      --ink: #1c1c1c;
+      --rose: #d9afa9;
+      --rose-line: #dcb0aa;
+      --rose-deep: #c98f88;
       --white: #ffffff;
     }
     * { box-sizing: border-box; }
@@ -24,48 +22,58 @@
       margin: 0;
       font-family: 'Poppins', sans-serif;
       background: var(--cream);
-      background-image: radial-gradient(circle at 50% 0%, var(--cream-deep), var(--cream) 55%);
       color: var(--ink);
       min-height: 100vh;
       display: flex;
       justify-content: center;
-      padding: 40px 16px 56px;
+      padding: 44px 20px 56px;
     }
-    .card {
-      width: 100%;
-      max-width: 420px;
-    }
+    .card { width: 100%; max-width: 440px; }
 
-    /* ---- Header ---- */
+    /* ---- Header, matching the homepage hero ---- */
     .dancer {
       display: block;
-      margin: 0 auto 10px;
-      width: 64px;
-      height: 64px;
-      color: var(--blush-line);
+      margin: 0 auto 28px;
+      width: 92px;
+      height: 115px;
+      color: var(--rose);
     }
     h1 {
-      font-family: 'Cormorant Garamond', serif;
-      font-weight: 600;
-      font-size: 30px;
-      color: var(--rose-deep);
+      font-family: 'Playfair Display', serif;
+      font-weight: 700;
+      font-size: 28px;
+      color: var(--ink);
       margin: 0;
       text-align: center;
-      letter-spacing: 0.3px;
+      line-height: 1.15;
     }
-    .rule {
-      width: 56px;
+    .rule-thin {
+      width: 90px;
       height: 1px;
-      background: var(--blush-line);
-      margin: 14px auto;
+      background: var(--ink);
+      margin: 18px auto;
+      opacity: 0.85;
     }
     .subtitle {
-      font-family: 'Parisienne', cursive;
-      font-size: 24px;
-      color: var(--rose);
+      font-family: 'Poppins', sans-serif;
+      font-weight: 700;
+      font-size: 17px;
+      color: var(--ink);
       text-align: center;
-      margin: 0 0 28px;
+      margin: 0 0 6px;
+    }
+    .script {
+      font-family: 'Alex Brush', cursive;
+      font-size: 32px;
+      color: var(--rose-deep);
+      text-align: center;
+      margin: 4px 0 0;
       line-height: 1;
+    }
+    .rule-wide {
+      height: 1px;
+      background: var(--rose-line);
+      margin: 26px 0 30px;
     }
 
     /* ---- Products ---- */
@@ -74,7 +82,7 @@
       align-items: center;
       justify-content: space-between;
       background: var(--white);
-      border: 1px solid var(--blush);
+      border: 1px solid #e9e2dc;
       border-radius: 4px;
       padding: 16px 18px;
       margin-bottom: 12px;
@@ -82,32 +90,27 @@
     }
     .product.selected {
       border-color: var(--rose);
-      background: var(--blush);
+      background: #fbf3f1;
     }
     .product-name {
-      font-family: 'Cormorant Garamond', serif;
-      font-weight: 600;
-      font-size: 19px;
+      font-family: 'Playfair Display', serif;
+      font-weight: 700;
+      font-size: 18px;
       color: var(--ink);
     }
     .product-price {
       font-size: 13px;
-      color: var(--rose);
+      color: var(--rose-deep);
       margin-top: 2px;
-      letter-spacing: 0.2px;
     }
-    .qty {
-      display: flex;
-      align-items: center;
-      gap: 12px;
-    }
+    .qty { display: flex; align-items: center; gap: 12px; }
     .qty button {
       width: 28px;
       height: 28px;
       border-radius: 50%;
       border: 1px solid var(--rose);
       background: var(--white);
-      color: var(--rose-deep);
+      color: var(--ink);
       font-size: 15px;
       cursor: pointer;
       line-height: 1;
@@ -115,13 +118,8 @@
       align-items: center;
       justify-content: center;
     }
-    .qty button:active { background: var(--blush); }
-    .qty span {
-      min-width: 14px;
-      text-align: center;
-      font-weight: 500;
-      color: var(--ink);
-    }
+    .qty button:active { background: #fbf3f1; }
+    .qty span { min-width: 14px; text-align: center; font-weight: 500; }
 
     /* ---- Total & pay ---- */
     .total-row {
@@ -130,76 +128,46 @@
       align-items: baseline;
       margin: 22px 0 18px;
       padding-top: 16px;
-      border-top: 1px solid var(--blush-line);
+      border-top: 1px solid var(--rose-line);
     }
     .total-row .label {
-      font-family: 'Cormorant Garamond', serif;
-      font-size: 17px;
-      color: var(--rose-deep);
-    }
-    .total-row .amount {
-      font-size: 19px;
-      font-weight: 600;
+      font-family: 'Playfair Display', serif;
+      font-weight: 700;
+      font-size: 16px;
       color: var(--ink);
     }
+    .total-row .amount { font-size: 19px; font-weight: 600; color: var(--ink); }
     #pay-button {
       width: 100%;
-      background: var(--rose-deep);
+      background: var(--ink);
       color: var(--cream);
       border: none;
       border-radius: 4px;
       padding: 15px;
       font-family: 'Poppins', sans-serif;
       font-size: 15px;
-      font-weight: 500;
+      font-weight: 600;
       letter-spacing: 0.3px;
       cursor: pointer;
       transition: background 0.15s;
     }
-    #pay-button:hover:not(:disabled) { background: #5a2a2c; }
-    #pay-button:disabled {
-      opacity: 0.45;
-      cursor: not-allowed;
-    }
+    #pay-button:hover:not(:disabled) { background: #000; }
+    #pay-button:disabled { opacity: 0.4; cursor: not-allowed; }
     #checkout-form { margin-top: 22px; }
 
     /* ---- States ---- */
-    #confirmation, #error-message {
-      display: none;
-      text-align: center;
-      padding: 32px 12px 8px;
-    }
-    #confirmation .mark {
-      width: 46px;
-      height: 46px;
-      margin: 0 auto 18px;
-      color: var(--rose-deep);
-    }
+    #confirmation, #error-message { display: none; text-align: center; padding: 20px 12px 8px; }
+    #confirmation .mark { width: 44px; height: 44px; margin: 0 auto 16px; color: var(--ink); }
     #confirmation h2 {
-      font-family: 'Cormorant Garamond', serif;
-      font-weight: 600;
-      color: var(--rose-deep);
-      font-size: 24px;
-      margin: 0 0 8px;
+      font-family: 'Playfair Display', serif;
+      font-weight: 700;
+      color: var(--ink);
+      font-size: 23px;
+      margin: 0 0 6px;
     }
-    #confirmation p {
-      font-family: 'Parisienne', cursive;
-      font-size: 20px;
-      color: var(--rose);
-      margin: 0;
-    }
-    #loading {
-      text-align: center;
-      padding: 60px 0;
-      color: var(--rose);
-      font-size: 14px;
-      letter-spacing: 0.2px;
-    }
-    #error-message p {
-      color: #9c3b3b;
-      font-size: 14px;
-      line-height: 1.6;
-    }
+    #confirmation p { font-family: 'Alex Brush', cursive; font-size: 28px; color: var(--rose-deep); margin: 4px 0 0; }
+    #loading { text-align: center; padding: 60px 0; color: var(--rose-deep); font-size: 14px; }
+    #error-message p { color: #9c3b3b; font-size: 14px; line-height: 1.6; font-family: 'Poppins', sans-serif; }
   </style>
 </head>
 <body>
@@ -208,17 +176,22 @@
     <div id="loading">Loading…</div>
 
     <div id="picker" style="display:none;">
-      <svg class="dancer" viewBox="0 0 100 100" fill="currentColor" xmlns="http://www.w3.org/2000/svg">
-        <circle cx="61" cy="16" r="7.5"/>
-        <path d="M58 23c-2 6-1 12 3 16 3.5 3.5 4 8 1.5 13-1.5 3-1 5 1.5 6.5 4 2.5 5 7 2.5 12.5-2 4.5-1.5 9 2 12.5l3 3-4 3.5c-4-3.5-5.5-9-3.5-14.5 1.7-4.7.7-8-2.3-10-3.8-2.5-4.7-6.3-2.3-11 2.3-4.6 1.6-8.4-2-12-4-4-5.3-10.4-3.4-16.5 1-3.4 3-5.4 5.6-3z"/>
-        <path d="M56 30c-6 1.5-11.5 5.5-15 11.5-1.5 2.6-4.7 3.4-7 1.6-2-1.6-2.3-4.4-.7-6.4 4.3-5.4 10.3-9.7 17-11.9 2.6-.9 5.2.6 5.7 3.2z"/>
-        <path d="M69 27c5.5 2.7 9.8 7.5 11.8 13.5.9 2.7-.4 5.6-3 6.4-2.5.8-5.2-.6-6-3.1-1.4-4.2-4.2-7.7-7.9-9.9-2.4-1.4-3-4.6-1.3-6.8 1.4-1.8 4.1-2.2 6.4-.1z"/>
-        <path d="M63 62c1 6.5-.5 12.7-4.5 17.8-2 2.6-1.6 6 .8 8 2.3 1.9 5.6 1.6 7.6-.7 5.5-6.4 7.7-14.5 6.3-23-.5-3-3.3-5-6.3-4.4-2.7.5-4.4 3.1-3.9 5.9-.1-1.2 0-2.4 0-3.6z"/>
-        <path d="M55 63c-2 8-7 14.7-14 19-2.7 1.7-6.1.8-7.7-2-1.5-2.6-.6-6 2-7.7 5.2-3.2 8.9-8 10.5-14 .8-3 3.9-4.7 6.8-3.9 2.7.8 4.3 3.5 3.6 6.2-.3 1.1-.8 1.7-1.2 2.4z"/>
+      <svg class="dancer" viewBox="0 0 80 100" fill="currentColor" xmlns="http://www.w3.org/2000/svg">
+        <ellipse cx="49" cy="9" rx="5.5" ry="6"/>
+        <path d="M45 13c3 2 4 5 3 8-3-1-6 0-9 3-2 2-5 1-6-1-1-2 0-4 2-5 4-2 7-4 10-5z"/>
+        <path d="M52 14c5 0 9 2 12 6 2 2 1 5-1 6-2 1-4 0-5-2-2-3-5-5-8-6 0-2 1-3 2-4z"/>
+        <path d="M47 20c-2 5-2 10 1 14 1 2 0 4-2 5-5 2-10 6-13 11-1 2-4 3-6 1-2-1-2-4-1-6 4-6 10-11 16-13-1-4-1-8 1-11 1-2 3-2 4-1z"/>
+        <path d="M49 33c3 3 4 7 3 11-1 5 0 10 3 14 1 2 0 5-2 6-2 1-5 0-6-2-3-5-4-11-3-17-2-2-3-5-2-8 1-3 4-5 7-4z"/>
+        <path d="M44 46c1 6-1 11-5 15-3 3-4 7-3 11 1 2-1 5-3 5-3 1-5-1-5-3-1-6 1-11 5-16 2-2 3-5 3-8 1-3 4-5 8-4z"/>
+        <path d="M52 47c4-1 8 0 11 3 4 4 6 9 6 15 0 2-2 4-4 4-2 0-4-2-4-4 0-4-1-7-4-10-2-2-5-3-8-3 0-2 1-4 3-5z"/>
       </svg>
+
       <h1>His Image Performing Arts</h1>
-      <div class="rule"></div>
+      <div class="rule-thin"></div>
       <p class="subtitle">Merch Checkout</p>
+      <p class="script">Shop &amp; Go</p>
+
+      <div class="rule-wide"></div>
 
       <div class="product" id="product-tshirt" data-price-id="price_1UD3ufEEsuxo66cWxO1J4ewS" data-name="T-Shirt" data-amount="22">
         <div>
@@ -259,7 +232,7 @@
         <circle cx="24" cy="24" r="22" stroke="currentColor" stroke-width="1.5"/>
         <path d="M14 24.5l6.5 6.5L34 17" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
       </svg>
-      <h2>Payment received</h2>
+      <h2>Payment Received</h2>
       <p>Thank you for purchasing!</p>
     </div>
 
